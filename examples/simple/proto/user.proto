@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = "github.com/example/simple/proto";
+
+// User service for managing users
+service UserService {
+  // Get a user by ID
+  rpc GetUser(GetUserRequest) returns (User);
+  
+  // List all users with optional filtering
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  
+  // Create a new user
+  rpc CreateUser(CreateUserRequest) returns (User);
+  
+  // Delete a user (dangerous operation)
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  int64 created_at = 4;
+}
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message ListUsersRequest {
+  int32 limit = 1;
+  string cursor = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  string next_cursor = 2;
+}
+
+message CreateUserRequest {
+  string name = 1;
+  string email = 2;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message DeleteUserResponse {
+  bool deleted = 1;
+}

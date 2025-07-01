@@ -1,0 +1,13 @@
+proto:
+  dirs: ["./proto"]
+  
+generate:
+  output_dir: "./mcp-server"
+  module: "github.com/example/simple-mcp-server"
+  
+auth:
+  enabled: true
+  env_var: "MCP_API_KEYS"
+  
+server:
+  port: 3333
