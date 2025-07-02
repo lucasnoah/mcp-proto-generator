@@ -1,0 +1,35 @@
+proto:
+  dirs: ["../proto/main/services"]
+  
+generate:
+  output_dir: "./rescue-titan-mcp"
+  module: "github.com/lucasnoah/rescue-titan-mcp-server"
+  
+auth:
+  enabled: false  # Disable for testing
+  
+server:
+  port: 3334  # Different port to avoid conflicts
+
+# Real service endpoints
+services:
+  databaseservice:
+    description: "Rescue Titan database operations"
+    endpoint_env: "DATABASE_SERVICE_ADDR"
+    default_endpoint: "localhost:50051"
+    
+  authservice:
+    description: "Rescue Titan authentication"
+    endpoint_env: "AUTH_SERVICE_ADDR"
+    default_endpoint: "localhost:50053"
+    
+  # These services might not be running, but we'll include defaults
+  albisyncservice:
+    description: "ALBI CRM integration"
+    endpoint_env: "ALBI_SYNC_ADDR"
+    default_endpoint: "localhost:50052"
+    
+  notificationservice:
+    description: "Email and notification service"
+    endpoint_env: "NOTIFICATION_SERVICE_ADDR"
+    default_endpoint: "localhost:50054"

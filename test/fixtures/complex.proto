@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+package fixtures;
+
+option go_package = "github.com/example/fixtures";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+// Complex service with multiple types of operations
+service ComplexService {
+  // Batch operations
+  rpc BatchCreateItems(BatchCreateItemsRequest) returns (BatchCreateItemsResponse) {}
+  rpc BatchDeleteItems(BatchDeleteItemsRequest) returns (google.protobuf.Empty) {}
+  
+  // Streaming operations
+  rpc StreamItems(StreamItemsRequest) returns (stream StreamItemsResponse) {}
+  rpc UploadItems(stream UploadItemsRequest) returns (UploadItemsResponse) {}
+  
+  // Long running operations
+  rpc StartProcessing(StartProcessingRequest) returns (Operation) {}
+  rpc GetOperation(GetOperationRequest) returns (Operation) {}
+  
+  // Admin operations (all dangerous)
+  rpc DropDatabase(DropDatabaseRequest) returns (google.protobuf.Empty) {}
+  rpc PurgeData(PurgeDataRequest) returns (google.protobuf.Empty) {}
+  rpc DestroyEverything(DestroyEverythingRequest) returns (google.protobuf.Empty) {}
+}
+
+// Nested message types
+message ComplexItem {
+  string id = 1;
+  
+  message Metadata {
+    map<string, string> labels = 1;
+    repeated string tags = 2;
+    google.protobuf.Timestamp created_at = 3;
+    google.protobuf.Timestamp updated_at = 4;
+  }
+  
+  Metadata metadata = 2;
+  
+  enum Status {
+    UNKNOWN = 0;
+    ACTIVE = 1;
+    INACTIVE = 2;
+    DELETED = 3;
+  }
+  
+  Status status = 3;
+  
+  oneof data {
+    string text_data = 4;
+    bytes binary_data = 5;
+    StructuredData structured_data = 6;
+  }
+}
+
+message StructuredData {
+  repeated Field fields = 1;
+  
+  message Field {
+    string key = 1;
+    Value value = 2;
+  }
+  
+  message Value {
+    oneof kind {
+      double number_value = 1;
+      string string_value = 2;
+      bool bool_value = 3;
+      ListValue list_value = 4;
+    }
+  }
+  
+  message ListValue {
+    repeated Value values = 1;
+  }
+}
+
+// Request/Response messages
+message BatchCreateItemsRequest {
+  repeated ComplexItem items = 1;
+  bool validate_only = 2;
+}
+
+message BatchCreateItemsResponse {
+  repeated ComplexItem created_items = 1;
+  repeated Error errors = 2;
+  
+  message Error {
+    int32 index = 1;
+    string message = 2;
+  }
+}
+
+message BatchDeleteItemsRequest {
+  repeated string ids = 1;
+  bool force = 2;
+}
+
+message StreamItemsRequest {
+  string filter = 1;
+  int32 batch_size = 2;
+}
+
+message StreamItemsResponse {
+  repeated ComplexItem items = 1;
+  bool has_more = 2;
+}
+
+message UploadItemsRequest {
+  oneof data {
+    ComplexItem item = 1;
+    bytes chunk = 2;
+  }
+}
+
+message UploadItemsResponse {
+  int32 items_uploaded = 1;
+  int64 bytes_processed = 2;
+  google.protobuf.Duration processing_time = 3;
+}
+
+message StartProcessingRequest {
+  string job_id = 1;
+  ProcessingConfig config = 2;
+}
+
+message ProcessingConfig {
+  int32 parallelism = 1;
+  google.protobuf.Duration timeout = 2;
+  map<string, string> parameters = 3;
+}
+
+message Operation {
+  string name = 1;
+  bool done = 2;
+  
+  oneof result {
+    google.protobuf.Any response = 3;
+    Status error = 4;
+  }
+}
+
+message Status {
+  int32 code = 1;
+  string message = 2;
+  repeated google.protobuf.Any details = 3;
+}
+
+message GetOperationRequest {
+  string name = 1;
+}
+
+message DropDatabaseRequest {
+  string database_name = 1;
+  string confirmation_token = 2;
+}
+
+message PurgeDataRequest {
+  google.protobuf.Timestamp before = 1;
+  repeated string types = 2;
+}
+
+message DestroyEverythingRequest {
+  bool i_know_what_im_doing = 1;
+  string signed_confirmation = 2;
+}

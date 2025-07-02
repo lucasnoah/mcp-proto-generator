@@ -10,17 +10,31 @@ install:
 	@echo "Installing mcp-proto-gen..."
 	@go install ./cmd/mcp-proto-gen
 
-# Run tests
-test:
-	@echo "Running tests..."
-	@go test ./... -v
+# Run all tests
+test: test-unit test-integration
+
+# Run unit tests only
+test-unit:
+	@echo "Running unit tests..."
+	@go test -v -short ./pkg/...
+
+# Run integration tests
+test-integration:
+	@echo "Running integration tests..."
+	@go test -v ./test/...
 
 # Test with coverage
 test-coverage:
 	@echo "Running tests with coverage..."
-	@go test ./... -coverprofile=coverage.out
+	@go test -v -coverprofile=coverage.out -covermode=atomic ./...
 	@go tool cover -html=coverage.out -o coverage.html
 	@echo "Coverage report: coverage.html"
+	@go tool cover -func=coverage.out | grep total | awk '{print "Total coverage: " $$3}'
+
+# Run benchmarks
+test-benchmark:
+	@echo "Running benchmarks..."
+	@go test -bench=. -benchmem ./test/...
 
 # Lint code
 lint:

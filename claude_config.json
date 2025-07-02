@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "rescue-titan": {
+      "command": "/home/lucas/rescue-titan-v2/mcp-proto-generator/mcp-server/mcp-server",
+      "env": {
+        "MCP_AUTH_ENABLED": "false",
+        "DATABASE_SERVICE_ADDR": "localhost:50051",
+        "AUTH_SERVICE_ADDR": "localhost:50053",
+        "ALBI_SYNC_SERVICE_ADDR": "localhost:50054",
+        "NOTIFICATION_SERVICE_ADDR": "localhost:50055",
+        "FILE_STORAGE_SERVICE_ADDR": "localhost:50056",
+        "SEARCH_SERVICE_ADDR": "localhost:50057",
+        "WORKFLOW_SERVICE_ADDR": "localhost:50058"
+      }
+    }
+  }
+}
